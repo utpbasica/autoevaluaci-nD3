@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoevaluación Docente — Dimensión 3</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --green: #0F6E56;
+    --green-light: #E1F5EE;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --gray-50: #F8F7F4;
+    --gray-100: #EDEBE5;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-900: #1C1B19;
+    --white: #FFFFFF;
+    --border: 1px solid var(--gray-200);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* LAYOUT */
+  .page-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* HEADER */
+  .doc-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    background: var(--teal);
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .doc-header-left { flex: 1; }
+  .doc-header .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    margin-bottom: 10px;
+    color: white;
+  }
+  .doc-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: white;
+    margin-bottom: 6px;
+  }
+  .doc-header p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    max-width: 480px;
+  }
+  .logo-area {
+    flex-shrink: 0;
+    width: 100px;
+    height: 80px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px dashed rgba(255,255,255,0.4);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    overflow: hidden;
+    position: relative;
+  }
+  .logo-area:hover { background: rgba(255,255,255,0.2); }
+  .logo-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .logo-area .logo-hint { font-size: 10px; color: rgba(255,255,255,0.6); text-align: center; line-height: 1.4; }
+  .logo-area .logo-icon { font-size: 22px; margin-bottom: 4px; }
+  #logoPreview { width: 100%; height: 100%; object-fit: contain; display: none; position: absolute; inset: 0; background: white; padding: 6px; border-radius: var(--radius); }
+
+  /* DOCENTE CARD */
+  .docente-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .docente-card h2 { font-size: 13px; font-weight: 500; color: var(--gray-400); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1rem; }
+  .docente-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-group label { font-size: 12px; color: var(--gray-600); font-weight: 500; }
+  .field-group input {
+    border: var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus { border-color: var(--teal-mid); background: white; }
+
+  /* PROGRESS */
+  .progress-wrap {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .progress-track { flex: 1; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--teal-mid); border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+  .progress-label { font-size: 13px; color: var(--gray-600); white-space: nowrap; }
+  .progress-count { font-size: 13px; font-weight: 500; color: var(--teal); white-space: nowrap; }
+
+  /* SUBDIM */
+  .subdim-block { margin-bottom: 2rem; }
+  .subdim-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--teal-light);
+  }
+  .subdim-tag {
+    font-size: 11px; font-weight: 500;
+    background: var(--teal); color: white;
+    border-radius: 20px; padding: 3px 12px;
+    letter-spacing: 0.04em;
+  }
+  .subdim-name { font-size: 16px; font-weight: 500; color: var(--teal); }
+
+  /* INDICATOR CARD */
+  .ind-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .ind-card.answered { border-color: var(--gray-200); }
+  .ind-card-header { padding: 1.25rem 1.5rem 0.75rem; }
+  .ind-code { font-size: 11px; font-weight: 500; color: var(--teal); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .ind-title { font-size: 15px; font-weight: 500; color: var(--gray-900); margin-bottom: 6px; }
+  .ind-desc { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+  .ind-levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: var(--border); }
+  .level-btn {
+    cursor: pointer;
+    padding: 1rem;
+    border-right: var(--border);
+    transition: background 0.15s;
+    user-select: none;
+    position: relative;
+  }
+  .level-btn:last-child { border-right: none; }
+  .level-btn:hover { background: var(--gray-50); }
+  .level-num { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .level-name-tag { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
+  .level-text { font-size: 11px; color: var(--gray-600); line-height: 1.45; }
+  .level-check {
+    position: absolute; top: 8px; right: 8px;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    transition: all 0.15s;
+    background: white;
+  }
+
+  /* nivel colores */
+  .lv1 .level-num { color: var(--red); }
+  .lv1 .level-name-tag { color: var(--red); }
+  .lv2 .level-num { color: var(--amber); }
+  .lv2 .level-name-tag { color: var(--amber); }
+  .lv3 .level-num { color: var(--green); }
+  .lv3 .level-name-tag { color: var(--green); }
+  .lv4 .level-num { color: var(--blue); }
+  .lv4 .level-name-tag { color: var(--blue); }
+
+  .level-btn.sel-1 { background: var(--red-light); }
+  .level-btn.sel-1 .level-check { background: var(--red); border-color: var(--red); color: white; }
+  .level-btn.sel-2 { background: var(--amber-light); }
+  .level-btn.sel-2 .level-check { background: var(--amber); border-color: var(--amber); color: white; }
+  .level-btn.sel-3 { background: var(--green-light); }
+  .level-btn.sel-3 .level-check { background: var(--green); border-color: var(--green); color: white; }
+  .level-btn.sel-4 { background: var(--blue-light); }
+  .level-btn.sel-4 .level-check { background: var(--blue); border-color: var(--blue); color: white; }
+
+  /* SUBMIT */
+  .submit-area { text-align: center; margin-top: 2rem; }
+  .warn-msg { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; }
+  .btn-submit {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 13px 36px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { background: var(--teal-mid); }
+  .btn-submit:active { transform: scale(0.98); }
+
+  /* RESULTS */
+  #resultPanel { display: none; }
+  .result-header-bar {
+    background: var(--teal);
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .result-header-bar h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; font-weight: 400; margin-bottom: 4px;
+  }
+  .result-header-bar .meta { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .summary-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+  }
+  .summary-card .s-val { font-size: 26px; font-weight: 300; color: var(--gray-900); }
+  .summary-card .s-lbl { font-size: 11px; color: var(--gray-600); margin-top: 2px; }
+
+  .result-table-wrap {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .result-table-wrap h3 {
+    font-size: 13px; font-weight: 500; color: var(--gray-400);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    border-bottom: var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; font-weight: 500; color: var(--gray-400); letter-spacing: 0.05em; text-transform: uppercase; padding: 8px 16px; text-align: left; background: var(--gray-50); border-bottom: var(--border); }
+  td { font-size: 13px; padding: 10px 16px; border-bottom: var(--border); color: var(--gray-900); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .badge-level {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .bl1 { background: var(--red-light); color: var(--red); }
+  .bl2 { background: var(--amber-light); color: var(--amber); }
+  .bl3 { background: var(--green-light); color: var(--green); }
+  .bl4 { background: var(--blue-light); color: var(--blue); }
+
+  .result-actions { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 1.5rem; }
+  .btn-print {
+    background: var(--teal); color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    padding: 11px 28px;
+    border: none; border-radius: 50px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-print:hover { background: var(--teal-mid); }
+  .btn-back {
+    background: none; color: var(--gray-600);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 11px 20px;
+    border: var(--border); border-radius: 50px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-back:hover { background: var(--gray-100); }
+
+  /* PRINT */
+  @media print {
+    body { background: white; font-size: 13px; }
+    .page-wrap { padding: 1rem; max-width: 100%; }
+    #formPanel { display: none !important; }
+    #resultPanel { display: block !important; }
+    .result-actions { display: none !important; }
+    .result-header-bar { background: var(--teal) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .badge-level { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .summary-card { break-inside: avoid; }
+    table { break-inside: auto; }
+    tr { break-inside: avoid; }
+    @page { margin: 1.5cm; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 620px) {
+    .docente-fields { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(3, 1fr); }
+    .ind-levels { grid-template-columns: 1fr 1fr; }
+    .level-btn:nth-child(2) { border-right: none; }
+    .level-btn:nth-child(3) { border-top: var(--border); }
+    .doc-header { flex-direction: column; }
+    .logo-area { width: 80px; height: 60px; align-self: flex-end; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- FORM PANEL -->
+  <div id="formPanel">
+
+    <div class="doc-header">
+      <div class="doc-header-left">
+        <div class="badge">Enfoque Docente · Agencia de Calidad 2025</div>
+        <h1>Autoevaluación Docente<br>Dimensión 3</h1>
+        <p>Apoyo al aprendizaje profundo · Lea cada descriptor y seleccione el nivel que mejor representa su práctica actual.</p>
+      </div>
+      <div class="logo-area" title="Haga clic para subir el logo de su establecimiento">
+        <input type="file" id="logoInput" accept="image/*" onchange="loadLogo(event)">
+        <img id="logoPreview" alt="Logo establecimiento">
+        <div class="logo-hint" id="logoHint">
+          <div class="logo-icon">🏫</div>
+          <span>Logo<br>establecimiento</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="docente-card">
+      <h2>Datos del docente</h2>
+      <div class="docente-fields">
+        <div class="field-group">
+          <label for="nombreDocente">Nombre completo</label>
+          <input type="text" id="nombreDocente" placeholder="Ej: María González Rojas">
+        </div>
+        <div class="field-group">
+          <label for="establecimiento">Establecimiento</label>
+          <input type="text" id="establecimiento" placeholder="Ej: Escuela Los Andes">
+        </div>
+        <div class="field-group">
+          <label for="rbd">RBD</label>
+          <input type="text" id="rbd" placeholder="Ej: 12345">
+        </div>
+        <div class="field-group">
+          <label for="fechaEval">Fecha de evaluación</label>
+          <input type="date" id="fechaEval">
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <span class="progress-label">Progreso</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-count" id="progressCount">0 / 9</span>
+    </div>
+
+    <div id="indicatorsContainer"></div>
+
+    <div class="submit-area">
+      <p class="warn-msg" id="warnMsg">Por favor, responda todos los indicadores antes de continuar.</p>
+      <button class="btn-submit" id="btnSubmit" onclick="submitEval()">Ver mis resultados →</button>
+    </div>
+  </div>
+
+  <!-- RESULT PANEL -->
+  <div id="resultPanel">
+    <div class="result-header-bar">
+      <h2>Resultados de Autoevaluación</h2>
+      <div class="meta" id="resultMeta"></div>
+    </div>
+
+    <div class="summary-grid" id="summaryGrid"></div>
+
+    <div class="result-table-wrap">
+      <h3>Detalle por indicador</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th>Subdimensión</th>
+            <th>Nivel</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+      <button class="btn-back" onclick="backToForm()">← Volver a editar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const INDICATORS = [
+  {
+    id: "3.1.1", subdim: "3.1", subdimName: "Construcción de sentidos",
+    title: "Conexión con las experiencias previas",
+    desc: "Acciones para establecer conexiones significativas entre los contenidos y las actividades con las experiencias de los y las estudiantes, promoviendo que las identifiquen y utilicen para el desarrollo de sus aprendizajes.",
+    levels: [
+      "No se observan acciones para que los y las estudiantes vinculen sus experiencias con la actividad de la clase.",
+      "Se observan acciones poco efectivas para que los y las estudiantes vinculen sus experiencias con la actividad de la clase.",
+      "Se observan acciones efectivas para fomentar que los y las estudiantes vinculen sus experiencias y aprendizajes previos con la actividad de la clase.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para fomentar que los y las estudiantes vinculen sus experiencias y aprendizajes previos con la actividad de la clase."
+    ]
+  },
+  {
+    id: "3.1.2", subdim: "3.1", subdimName: "Construcción de sentidos",
+    title: "Organización o práctica de lo aprendido",
+    desc: "Acciones para promover que los y las estudiantes apliquen de manera práctica los aprendizajes logrados, incluyendo síntesis, sistematización y ejercitación de los contenidos abordados.",
+    levels: [
+      "No se observan acciones para que los y las estudiantes apliquen de manera práctica sus aprendizajes.",
+      "Se observan acciones poco efectivas para que los y las estudiantes apliquen de manera práctica sus aprendizajes.",
+      "Se observan acciones efectivas para promover que los y las estudiantes apliquen de manera práctica los aprendizajes logrados durante la clase.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para promover que los y las estudiantes apliquen de manera práctica los aprendizajes logrados durante la clase."
+    ]
+  },
+  {
+    id: "3.2.1", subdim: "3.2", subdimName: "Acompañamiento formativo",
+    title: "Monitoreo del proceso de aprendizaje",
+    desc: "Acciones para acompañar a los y las estudiantes y recoger evidencia que permita verificar su progreso y comprensión de los contenidos, para identificar áreas de dificultad y ofrecer apoyo adicional.",
+    levels: [
+      "No se observan acciones de seguimiento a los niveles de comprensión de los y las estudiantes durante la clase.",
+      "Se observan acciones poco efectivas para hacer seguimiento a los niveles de comprensión de los y las estudiantes durante la clase.",
+      "Se observan acciones efectivas para hacer seguimiento y recoger evidencias sobre los niveles de comprensión de los y las estudiantes durante la clase.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para hacer seguimiento y recoger evidencias sobre los niveles de comprensión durante la clase."
+    ]
+  },
+  {
+    id: "3.2.2", subdim: "3.2", subdimName: "Acompañamiento formativo",
+    title: "Retroalimentación del proceso de aprendizaje",
+    desc: "Acciones para brindar información detallada y constructiva a los y las estudiantes, destacando aspectos logrados y con dificultades, con sugerencias de mejora desde un diálogo que fomente el logro de los aprendizajes.",
+    levels: [
+      "No se observan acciones para retroalimentar a los y las estudiantes durante la clase.",
+      "Se observan acciones poco efectivas para retroalimentar a los y las estudiantes durante la clase.",
+      "Se observan acciones efectivas para retroalimentar a los y las estudiantes, con entrega de información sobre los aspectos logrados o no logrados de sus desempeños.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para retroalimentar a los y las estudiantes sobre sus desempeños y resultados de aprendizaje."
+    ]
+  },
+  {
+    id: "3.3.1", subdim: "3.3", subdimName: "Pensamiento de orden superior",
+    title: "Oportunidad de pensar creativamente",
+    desc: "Acciones que promueven oportunidades para que los y las estudiantes desarrollen soluciones originales frente a las actividades, ayudándoles a expresar sus propuestas de manera innovadora.",
+    levels: [
+      "No se observan acciones para que los y las estudiantes formulen ideas y/o elaboren productos originales durante la clase.",
+      "Se observan acciones poco efectivas para que los y las estudiantes formulen ideas y/o elaboren productos originales durante la clase.",
+      "Se observan acciones efectivas para fomentar que los y las estudiantes formulen ideas y/o elaboren productos originales relacionados con la actividad de la clase.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para fomentar que los y las estudiantes formulen ideas y/o elaboren productos originales relacionados con la actividad."
+    ]
+  },
+  {
+    id: "3.3.2", subdim: "3.3", subdimName: "Pensamiento de orden superior",
+    title: "Oportunidad de pensar críticamente",
+    desc: "Acciones para promover que los y las estudiantes puedan identificar, analizar y definir problemas, fomentando la argumentación, contraargumentación y toma de decisiones informadas.",
+    levels: [
+      "No se observan acciones para que los y las estudiantes analicen problemáticas o argumenten sus opiniones durante la clase.",
+      "Se observan acciones poco efectivas para promover que los y las estudiantes analicen problemáticas y argumenten sus opiniones durante la clase.",
+      "Se observan acciones efectivas para promover que los y las estudiantes analicen diversas problemáticas, argumenten y contraargumenten sus opiniones y decisiones.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para promover el análisis, argumentación y contraargumentación relacionadas con la actividad."
+    ]
+  },
+  {
+    id: "3.3.3", subdim: "3.3", subdimName: "Pensamiento de orden superior",
+    title: "Oportunidad de pensar metacognitivamente",
+    desc: "Acciones que promueven el trabajo autónomo o autorregulado en los y las estudiantes, con herramientas para la planificación, monitoreo, autoevaluación y coevaluación, y reconocimiento de áreas de mejora.",
+    levels: [
+      "No se observan acciones para incentivar que los y las estudiantes reflexionen sobre cómo están aprendiendo.",
+      "Se observan acciones poco efectivas para incentivar que los y las estudiantes reflexionen sobre cómo están aprendiendo.",
+      "Se observan acciones efectivas para incentivar que los y las estudiantes reflexionen sobre cómo están aprendiendo, identifiquen sus áreas de mejora y ajusten sus estrategias.",
+      "Cumple con el nivel Desarrollado y además se observan acciones innovadoras para incentivar la reflexión metacognitiva, identificación de áreas de mejora y ajuste de estrategias."
+    ]
+  }
+];
+
+const LEVEL_NAMES = ["Por desarrollar", "En desarrollo", "Desarrollado", "Destacado"];
+const LEVEL_CLASSES = ["lv1", "lv2", "lv3", "lv4"];
+const SEL_CLASSES = ["sel-1", "sel-2", "sel-3", "sel-4"];
+const BADGE_CLASSES = ["bl1", "bl2", "bl3", "bl4"];
+
+const selections = {};
+
+function buildForm() {
+  const container = document.getElementById("indicatorsContainer");
+  const subdims = [...new Set(INDICATORS.map(i => i.subdim))];
+
+  subdims.forEach(subdimId => {
+    const inds = INDICATORS.filter(i => i.subdim === subdimId);
+    const subdimName = inds[0].subdimName;
+
+    const block = document.createElement("div");
+    block.className = "subdim-block";
+    block.innerHTML = `
+      <div class="subdim-header">
+        <span class="subdim-tag">${subdimId}</span>
+        <span class="subdim-name">${subdimName}</span>
+      </div>`;
+
+    inds.forEach(ind => {
+      const card = document.createElement("div");
+      card.className = "ind-card";
+      card.id = `card-${ind.id}`;
+
+      let levelsHTML = '';
+      ind.levels.forEach((ldesc, i) => {
+        levelsHTML += `
+          <div class="level-btn ${LEVEL_CLASSES[i]}" id="btn-${ind.id}-${i+1}" onclick="selectLevel('${ind.id}', ${i+1})">
+            <div class="level-check" id="chk-${ind.id}-${i+1}">✓</div>
+            <div class="level-num">Nivel ${i+1}</div>
+            <div class="level-name-tag">${LEVEL_NAMES[i]}</div>
+            <div class="level-text">${ldesc}</div>
+          </div>`;
+      });
+
+      card.innerHTML = `
+        <div class="ind-card-header">
+          <div class="ind-code">${ind.id}</div>
+          <div class="ind-title">${ind.title}</div>
+          <div class="ind-desc">${ind.desc}</div>
+        </div>
+        <div class="ind-levels">${levelsHTML}</div>`;
+
+      block.appendChild(card);
+    });
+    container.appendChild(block);
+  });
+
+  document.getElementById("fechaEval").valueAsDate = new Date();
+}
+
+function selectLevel(indId, level) {
+  const prev = selections[indId];
+  if (prev) {
+    document.getElementById(`btn-${indId}-${prev}`).classList.remove(`sel-${prev}`);
+  }
+  selections[indId] = level;
+  document.getElementById(`btn-${indId}-${level}`).classList.add(`sel-${level}`);
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = Object.keys(selections).length;
+  const total = INDICATORS.length;
+  document.getElementById("progressFill").style.width = `${(done/total)*100}%`;
+  document.getElementById("progressCount").textContent = `${done} / ${total}`;
+}
+
+const SHEETS_URL = "https://script.google.com/a/macros/liceogabrielamistral-temuco.cl/s/AKfycbwe1MjdW94EG5Nu8OREC10O5gsmJvLqffiewpBMtWNO23rAuyiXXdTPI1mTkP2N9XS1Lg/exec";
+
+async function submitEval() {
+  const done = Object.keys(selections).length;
+  if (done < INDICATORS.length) {
+    document.getElementById("warnMsg").style.display = "block";
+    return;
+  }
+  document.getElementById("warnMsg").style.display = "none";
+
+  // Deshabilitar botón mientras envía
+  const btn = document.getElementById("btnSubmit");
+  btn.disabled = true;
+  btn.textContent = "Enviando...";
+
+  // Preparar datos
+  const nombre = document.getElementById("nombreDocente").value || "Sin nombre";
+  const establecimiento = document.getElementById("establecimiento").value || "";
+  const rbd = document.getElementById("rbd").value || "";
+  const fecha = document.getElementById("fechaEval").value || "";
+  const vals = INDICATORS.map(i => selections[i.id]);
+  const avg = (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2);
+
+  // Envío via iframe oculto (compatible con Google Sites)
+  const params = new URLSearchParams();
+  params.append("nombre", nombre);
+  params.append("establecimiento", establecimiento);
+  params.append("rbd", rbd);
+  params.append("fecha", fecha);
+  params.append("promedio", avg);
+  INDICATORS.forEach(ind => { params.append(ind.id, selections[ind.id]); });
+
+  try {
+    let iframe = document.getElementById("submitFrame");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = "submitFrame";
+      iframe.name = "submitFrame";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement("form");
+    form.method = "GET";
+    form.action = SHEETS_URL;
+    form.target = "submitFrame";
+    for (const [key, value] of params.entries()) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  } catch(e) {
+    console.warn("No se pudo enviar a Sheets:", e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = "Ver mis resultados →";
+
+  buildResults();
+  document.getElementById("formPanel").style.display = "none";
+  document.getElementById("resultPanel").style.display = "block";
+  window.scrollTo(0, 0);
+}
+
+function buildResults() {
+  const nombre = document.getElementById("nombreDocente").value || "Docente sin nombre";
+  const establecimiento = document.getElementById("establecimiento").value;
+  const fecha = document.getElementById("fechaEval").value;
+  const fechaStr = fecha ? new Date(fecha + "T12:00:00").toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" }) : "";
+
+  document.getElementById("resultMeta").textContent = `${nombre}${establecimiento ? " · " + establecimiento : ""}${fechaStr ? " · " + fechaStr : ""}`;
+
+  const vals = INDICATORS.map(i => selections[i.id]);
+  const avg = vals.reduce((a,b) => a+b, 0) / vals.length;
+  const counts = [0,0,0,0];
+  vals.forEach(v => counts[v-1]++);
+
+  const labels = ["Promedio", "N1 Por desarrollar", "N2 En desarrollo", "N3 Desarrollado", "N4 Destacado"];
+  const values = [avg.toFixed(1), counts[0], counts[1], counts[2], counts[3]];
+  document.getElementById("summaryGrid").innerHTML = labels.map((l,i) =>
+    `<div class="summary-card"><div class="s-val">${values[i]}</div><div class="s-lbl">${l}</div></div>`
+  ).join("");
+
+  const tbody = document.getElementById("resultBody");
+  tbody.innerHTML = "";
+  INDICATORS.forEach(ind => {
+    const lvl = selections[ind.id];
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><strong>${ind.id}</strong> ${ind.title}</td>
+      <td style="color:#888;">${ind.subdimName}</td>
+      <td><span class="badge-level ${BADGE_CLASSES[lvl-1]}">N${lvl} — ${LEVEL_NAMES[lvl-1]}</span></td>
+      <td style="font-size:12px;color:#666;">${ind.levels[lvl-1]}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function backToForm() {
+  document.getElementById("resultPanel").style.display = "none";
+  document.getElementById("formPanel").style.display = "block";
+  window.scrollTo(0, 0);
+}
+
+function loadLogo(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById("logoPreview");
+    const hint = document.getElementById("logoHint");
+    preview.src = e.target.result;
+    preview.style.display = "block";
+    hint.style.display = "none";
+  };
+  reader.readAsDataURL(file);
+}
+
+buildForm();
+</script>
+</body>
+</html>
